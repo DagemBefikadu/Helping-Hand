@@ -29,7 +29,7 @@ const router = express.Router()
 
 // INDEX for all feedbacks
 // GET /feedbacks
-router.get('/feedbacks', requireToken, (req, res, next) => {
+router.get('/feedbacks', (req, res, next) => {
 	Feedback.find()
 		.then((feedbacks) => {
 			// `feedbacks` will be an array of Mongoose documents
@@ -45,7 +45,7 @@ router.get('/feedbacks', requireToken, (req, res, next) => {
 
 // SHOW ONE Feedback entry
 // GET /items/5a7db6c74d55bc51bdf39793
-router.get('/feedbacks/:id', requireToken, (req, res, next) => {
+router.get('/feedbacks/:id', (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Feedback.findById(req.params.id)
 		.then(handle404)
