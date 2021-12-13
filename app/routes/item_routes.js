@@ -4,7 +4,7 @@ const express = require('express')
 const passport = require('passport')
 
 // pull in Mongoose model for items
-const Item = require('../models/items')
+const Item = require('../models/item')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -29,7 +29,7 @@ const router = express.Router()
 
 // INDEX for all item
 // GET /items
-router.get('/items', requireToken, (req, res, next) => {
+router.get('/items', (req, res, next) => {
 	Item.find()
 		.then((items) => {
 			// `items` will be an array of Mongoose documents
@@ -45,7 +45,7 @@ router.get('/items', requireToken, (req, res, next) => {
 
 // SHOW ONE ITEM
 // GET /items/5a7db6c74d55bc51bdf39793
-router.get('/items/:id', requireToken, (req, res, next) => {
+router.get('/items/:id',(req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Item.findById(req.params.id)
 		.then(handle404)
@@ -57,9 +57,9 @@ router.get('/items/:id', requireToken, (req, res, next) => {
 
 // CREATE
 // POST /items
-router.post('/items', requireToken, (req, res, next) => {
+router.post('/items',  (req, res, next) => {
 	// set owner of new item to be current user
-	req.body.item.owner = req.user.id
+
 	Item.create(req.body.item)
 		// respond to succesful `create` with status 201 and JSON of new "item"
 		.then((item) => {
@@ -73,17 +73,17 @@ router.post('/items', requireToken, (req, res, next) => {
 
 // UPDATE
 // PATCH /items/5a7db6c74d55bc51bdf39793
-router.patch('/items/:id', requireToken, removeBlanks, (req, res, next) => {
+router.patch('/items/:id',  removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
-	delete req.body.item.owner
+	
 
 	Item.findById(req.params.id)
 		.then(handle404)
 		.then((item) => {
 			// pass the `req` object and the Mongoose record to `requireOwnership`
 			// it will throw an error if the current user isn't the owner
-			requireOwnership(req, item)
+			
 
 			// pass the result of Mongoose's `.update` to the next `.then`
 			return Item.updateOne(req.body.item)
@@ -96,12 +96,11 @@ router.patch('/items/:id', requireToken, removeBlanks, (req, res, next) => {
 
 // DESTROY
 // DELETE /items/5a7db6c74d55bc51bdf39793
-router.delete('/items/:id', requireToken, (req, res, next) => {
+router.delete('/items/:id',  (req, res, next) => {
 	Item.findById(req.params.id)
 		.then(handle404)
 		.then((item) => {
 			// throw an error if current user doesn't own this `item`
-			requireOwnership(req, item)
 			// delete the item ONLY IF the above didn't throw an error
 			item.deleteOne()
 		})
