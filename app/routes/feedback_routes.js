@@ -4,7 +4,7 @@ const express = require('express')
 const passport = require('passport')
 
 // pull in Mongoose model for items
-const Feedback = require('../models/feedbacks')
+const Feedback = require('../models/feedback')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
