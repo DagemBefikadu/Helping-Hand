@@ -5,7 +5,7 @@ const passport = require('passport')
 
 // pull in Mongoose model for items
 const Item = require('../models/item')
-
+const User = require('../models/user')
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
 const customErrors = require('../../lib/custom_errors')
@@ -92,6 +92,17 @@ router.patch('/items/:id',  removeBlanks, (req, res, next) => {
 		.then(() => res.sendStatus(204))
 		// if an error occurs, pass it to the handler
 		.catch(next)
+})
+
+router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next)=>{
+    User.findById(req.user.id)
+    .then(handle404)
+    .then(foundUser =>{
+        foundUser.favorites.push(req.params.itemId)
+        return foundUser.save()
+    })
+    .then(() =>res.sendStatus(204))
+    .catch(next)
 })
 
 // DESTROY
