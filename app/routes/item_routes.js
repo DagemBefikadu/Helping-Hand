@@ -5,7 +5,7 @@ const passport = require('passport')
 
 // pull in Mongoose model for items
 const Item = require('../models/item')
-const User = require('../models/user')
+
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
 const customErrors = require('../../lib/custom_errors')
@@ -104,7 +104,6 @@ router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,ne
     .then(() =>res.sendStatus(204))
     .catch(next)
 })
-
 // DESTROY
 // DELETE /items/5a7db6c74d55bc51bdf39793
 router.delete('/items/:id',  (req, res, next) => {
