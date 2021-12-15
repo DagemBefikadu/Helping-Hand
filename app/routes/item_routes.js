@@ -95,7 +95,8 @@ router.patch('/items/:id',  removeBlanks, (req, res, next) => {
 })
 
 router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next)=>{
-    User.findById(req.user.id)
+
+  User.findById(req.user.id)
     .then(handle404)
     .then(foundUser =>{
         foundUser.favorites.push(req.params.itemId)
