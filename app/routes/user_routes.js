@@ -25,11 +25,18 @@ const requireToken = passport.authenticate('bearer', { session: false })
 // instantiate a router (mini app that only handles routes)
 const router = express.Router()
 
+<<<<<<< HEAD
 // INDEX for all Users
+=======
+>>>>>>> e59ba911085aefdce9da30ce6e61790e7e4b8e2e
 // GET /Users
 router.get('/users', (req, res, next) => {
 	User.find()
 		.then((users) => {
+<<<<<<< HEAD
+=======
+		
+>>>>>>> e59ba911085aefdce9da30ce6e61790e7e4b8e2e
 			// `Users` will be an array of Mongoose documents
 			// we want to convert each one to a POJO, so we use `.map` to
 			// apply `.toObject` to each one
@@ -41,14 +48,29 @@ router.get('/users', (req, res, next) => {
 		.catch(next)
 })
 
+<<<<<<< HEAD
+=======
+router.get('/users/favorites',requireToken, (req, res, next) =>{
+	User.findById(req.user.id)
+	.populate('favorites')
+		.then(users => {
+			console.log(users)
+			res.status(200).json({ users })
+		})
+		.catch(next)
+})
+
+>>>>>>> e59ba911085aefdce9da30ce6e61790e7e4b8e2e
 // SIGN UP
 // POST /sign-up
 router.post('/sign-up', (req, res, next) => {
+	console.log('******req.body.credentials: ', req.body.credentials)
 	// start a promise chain, so that any errors will pass to `handle`
 	Promise.resolve(req.body.credentials)
 		// reject any requests where `credentials.password` is not present, or where
 		// the password is an empty string
 		.then((credentials) => {
+			
 			if (
 				!credentials ||
 				!credentials.password ||
@@ -62,6 +84,7 @@ router.post('/sign-up', (req, res, next) => {
 		.then((hash) => {
 			// return necessary params to create a user
 			return {
+				name: req.body.credentials.name,
 				email: req.body.credentials.email,
 				hashedPassword: hash,
 			}
