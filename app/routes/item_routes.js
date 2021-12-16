@@ -106,6 +106,17 @@ router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,ne
     .catch(next)
 })
 
+router.delete('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next) => {
+	User.findById(req.user.id)
+	.then(handle404)
+	.then(foundUser =>{
+		foundUser.favorites.pull(req.params.itemId)
+		return foundUser.save()
+	})
+	.then(() =>res.sendStatus(204))
+	.catch(next)
+})
+
 // DESTROY
 // DELETE /items/5a7db6c74d55bc51bdf39793
 router.delete('/items/:id',  (req, res, next) => {
