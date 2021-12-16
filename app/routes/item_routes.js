@@ -57,12 +57,15 @@ router.get('/items/:id',(req, res, next) => {
 
 // CREATE
 // POST /items
-router.post('/items',  (req, res, next) => {
+router.post('/items',requireToken, (req, res, next) => {
 	// set owner of new item to be current user
-
-	Item.create(req.body.item)
+	
+	
+	Item.create(req.body.items)
+	
 		// respond to succesful `create` with status 201 and JSON of new "item"
 		.then((item) => {
+			
 			res.status(201).json({ item: item.toObject() })
 		})
 		// if an error occurs, pass it off to our error handler
@@ -108,7 +111,7 @@ router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,ne
 
 // DESTROY
 // DELETE /items/5a7db6c74d55bc51bdf39793
-router.delete('/items/:id',  (req, res, next) => {
+router.delete('/items/:id', requireToken,  (req, res, next) => {
 	Item.findById(req.params.id)
 		.then(handle404)
 		.then((item) => {
