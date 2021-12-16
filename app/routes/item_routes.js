@@ -5,6 +5,7 @@ const passport = require('passport')
 
 // pull in Mongoose model for items
 const Item = require('../models/item')
+const User = require('../models/user')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -66,12 +67,6 @@ router.get('/items/:id',(req, res, next) => {
 
 // CREATE
 // POST /items
-<<<<<<< HEAD
-router.post('/items', requireToken, (req, res, next) => {
-	// set owner of new item to be current user
-	req.body.item.owner = req.user.id
-	Item.create(req.body.item)
-=======
 
 router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) => {
 	cloudinary.uploader.upload(req.body.item.image, function(result) {
@@ -90,14 +85,13 @@ router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) =
 			// can send an error message back to the client
 			.catch(next)
 	})
-
+})
 router.post('/items',requireToken, (req, res, next) => {
 	// set owner of new item to be current user
 	
 	
 	Item.create(req.body.items)
 	
->>>>>>> cb97a0934d2aeba672443766e891f21b87c9d81b
 		// respond to succesful `create` with status 201 and JSON of new "item"
 		.then((item) => {
 			
@@ -144,15 +138,6 @@ router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,ne
     .catch(next)
 })
 
-<<<<<<< HEAD
-router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next)=>{
-	User.findById(req.user.id.populate('items'))
-	
-})
-// DESTROY
-// DELETE /items/5a7db6c74d55bc51bdf39793
-router.delete('/items/:id', requireToken, (req, res, next) => {
-=======
 router.delete('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next) => {
 	User.findById(req.user.id)
 	.then(handle404)
@@ -167,7 +152,6 @@ router.delete('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,n
 // DESTROY
 // DELETE /items/5a7db6c74d55bc51bdf39793
 router.delete('/items/:id', requireToken,  (req, res, next) => {
->>>>>>> cb97a0934d2aeba672443766e891f21b87c9d81b
 	Item.findById(req.params.id)
 		.then(handle404)
 		.then((item) => {
