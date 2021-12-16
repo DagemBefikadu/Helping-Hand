@@ -68,13 +68,16 @@ router.get('/items/:id',(req, res, next) => {
 // POST /items
 
 router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) => {
-	cloudinary.uploader.upload(req.body.item.image, function(result) {
+	console.log('req.body : ', req.body)
+	console.log('req.body.items.image: ', req.body.items.image)
+
+	cloudinary.uploader.upload(req.body.items.image, function(result) {
 		console.log(result)
 		console.log(result.url)
 		
-		req.body.item.image = result.url
+		req.body.items.image = result.url
 
-		Item.create(req.body.item)
+		Item.create(req.body.items)
 			// respond to succesful `create` with status 201 and JSON of new "item"
 			.then((item) => {
 				res.status(201).json({ item: item.toObject() })
@@ -84,22 +87,6 @@ router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) =
 			// can send an error message back to the client
 			.catch(next)
 	})
-
-router.post('/items',requireToken, (req, res, next) => {
-	// set owner of new item to be current user
-	
-	
-	Item.create(req.body.items)
-	
-		// respond to succesful `create` with status 201 and JSON of new "item"
-		.then((item) => {
-			
-			res.status(201).json({ item: item.toObject() })
-		})
-		// if an error occurs, pass it off to our error handler
-		// the error handler needs the error message and the `res` object so that it
-		// can send an error message back to the client
-		.catch(next)
 })
 
 // UPDATE
@@ -126,7 +113,6 @@ router.patch('/items/:id',  removeBlanks, (req, res, next) => {
 })
 
 router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next)=>{
-
   User.findById(req.user.id)
     .then(handle404)
     .then(foundUser =>{
@@ -147,6 +133,19 @@ router.delete('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,n
 	.then(() =>res.sendStatus(204))
 	.catch(next)
 })
+
+router.patch('/items/mylistings/:itemId', removeBlanks, requireToken, (req,res,next)=>{
+	console.log('req.user.id', req.user.id)
+	User.findById(req.user.id)
+	  .then(handle404)
+	  .then(foundUser =>{
+		  console.log('found User:',  foundUser)
+		  foundUser.createdItems.push(req.params.itemId)
+		  return foundUser.save()
+	  })
+	  .then(() =>res.sendStatus(204))
+	  .catch(next)
+  })
 
 // DESTROY
 // DELETE /items/5a7db6c74d55bc51bdf39793
