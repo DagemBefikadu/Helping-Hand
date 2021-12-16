@@ -10,6 +10,15 @@ const User = require('../models/user')
 // to throw a custom error
 const customErrors = require('../../lib/custom_errors')
 
+require('dotenv').config()
+//require multer to help with cloudinary upload
+const multer = require('multer');
+const upload = multer({ dest: './uploads/' });
+//require and config cloudinary
+const cloudinary = require('cloudinary')
+cloudinary.config(process.env.CLOUDINARY_URL)
+
+
 // we'll use this function to send 404 when non-existant document is requested
 const handle404 = customErrors.handle404
 // we'll use this function to send 401 when a user tries to modify a resource
@@ -20,7 +29,7 @@ const requireOwnership = customErrors.requireOwnership
 // { item: { title: '', text: 'foo' } } -> { item: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
 // passing this as a second argument to `router.<verb>` will make it
-// so that a token MUST be passed for that route to be available
+// so that a token MUST be passed for that route to be available¡
 // it will also set `req.user`
 const requireToken = passport.authenticate('bearer', { session: false })
 
@@ -57,18 +66,23 @@ router.get('/items/:id',(req, res, next) => {
 
 // CREATE
 // POST /items
-router.post('/items',  (req, res, next) => {
-	// set owner of new item to be current user
+router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) => {
+	cloudinary.uploader.upload(req.body.item.image, function(result) {
+		console.log(result)
+		console.log(result.url)
+		
+		req.body.item.image = result.url
 
-	Item.create(req.body.item)
-		// respond to succesful `create` with status 201 and JSON of new "item"
-		.then((item) => {
-			res.status(201).json({ item: item.toObject() })
-		})
-		// if an error occurs, pass it off to our error handler
-		// the error handler needs the error message and the `res` object so that it
-		// can send an error message back to the client
-		.catch(next)
+		Item.create(req.body.item)
+			// respond to succesful `create` with status 201 and JSON of new "item"
+			.then((item) => {
+				res.status(201).json({ item: item.toObject() })
+			})
+			// if an error occurs, pass it off to our error handler
+			// the error handler needs the error message and the `res` object so that it
+			// can send an error message back to the client
+			.catch(next)
+	})
 })
 
 // UPDATE
