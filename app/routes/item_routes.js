@@ -84,7 +84,7 @@ router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) =
 			// can send an error message back to the client
 			.catch(next)
 	})
-
+})
 router.post('/items',requireToken, (req, res, next) => {
 	// set owner of new item to be current user
 	
