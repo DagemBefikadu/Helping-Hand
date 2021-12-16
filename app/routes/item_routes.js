@@ -57,9 +57,9 @@ router.get('/items/:id',(req, res, next) => {
 
 // CREATE
 // POST /items
-router.post('/items',  (req, res, next) => {
+router.post('/items', requireToken, (req, res, next) => {
 	// set owner of new item to be current user
-
+	req.body.item.owner = req.user.id
 	Item.create(req.body.item)
 		// respond to succesful `create` with status 201 and JSON of new "item"
 		.then((item) => {
@@ -73,7 +73,7 @@ router.post('/items',  (req, res, next) => {
 
 // UPDATE
 // PATCH /items/5a7db6c74d55bc51bdf39793
-router.patch('/items/:id',  removeBlanks, (req, res, next) => {
+router.patch('/items/:id', requireToken, removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
 	
@@ -95,19 +95,24 @@ router.patch('/items/:id',  removeBlanks, (req, res, next) => {
 })
 
 router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next)=>{
-
-  User.findById(req.user.id)
+    User.findById(req.user.id)
     .then(handle404)
     .then(foundUser =>{
+		foundUser.
         foundUser.favorites.push(req.params.itemId)
         return foundUser.save()
     })
     .then(() =>res.sendStatus(204))
     .catch(next)
 })
+
+router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next)=>{
+	User.findById(req.user.id.populate('items'))
+	
+})
 // DESTROY
 // DELETE /items/5a7db6c74d55bc51bdf39793
-router.delete('/items/:id',  (req, res, next) => {
+router.delete('/items/:id', requireToken, (req, res, next) => {
 	Item.findById(req.params.id)
 		.then(handle404)
 		.then((item) => {
