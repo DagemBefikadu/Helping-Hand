@@ -10,6 +10,15 @@ const Item = require('../models/item')
 // to throw a custom error
 const customErrors = require('../../lib/custom_errors')
 
+require('dotenv').config()
+//require multer to help with cloudinary upload
+const multer = require('multer');
+const upload = multer({ dest: './uploads/' });
+//require and config cloudinary
+const cloudinary = require('cloudinary')
+cloudinary.config(process.env.CLOUDINARY_URL)
+
+
 // we'll use this function to send 404 when non-existant document is requested
 const handle404 = customErrors.handle404
 // we'll use this function to send 401 when a user tries to modify a resource
@@ -20,7 +29,7 @@ const requireOwnership = customErrors.requireOwnership
 // { item: { title: '', text: 'foo' } } -> { item: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
 // passing this as a second argument to `router.<verb>` will make it
-// so that a token MUST be passed for that route to be available
+// so that a token MUST be passed for that route to be available¡
 // it will also set `req.user`
 const requireToken = passport.authenticate('bearer', { session: false })
 
@@ -57,12 +66,41 @@ router.get('/items/:id',(req, res, next) => {
 
 // CREATE
 // POST /items
+<<<<<<< HEAD
 router.post('/items', requireToken, (req, res, next) => {
 	// set owner of new item to be current user
 	req.body.item.owner = req.user.id
 	Item.create(req.body.item)
+=======
+
+router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) => {
+	cloudinary.uploader.upload(req.body.item.image, function(result) {
+		console.log(result)
+		console.log(result.url)
+		
+		req.body.item.image = result.url
+
+		Item.create(req.body.item)
+			// respond to succesful `create` with status 201 and JSON of new "item"
+			.then((item) => {
+				res.status(201).json({ item: item.toObject() })
+			})
+			// if an error occurs, pass it off to our error handler
+			// the error handler needs the error message and the `res` object so that it
+			// can send an error message back to the client
+			.catch(next)
+	})
+
+router.post('/items',requireToken, (req, res, next) => {
+	// set owner of new item to be current user
+	
+	
+	Item.create(req.body.items)
+	
+>>>>>>> cb97a0934d2aeba672443766e891f21b87c9d81b
 		// respond to succesful `create` with status 201 and JSON of new "item"
 		.then((item) => {
+			
 			res.status(201).json({ item: item.toObject() })
 		})
 		// if an error occurs, pass it off to our error handler
@@ -106,6 +144,7 @@ router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,ne
     .catch(next)
 })
 
+<<<<<<< HEAD
 router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next)=>{
 	User.findById(req.user.id.populate('items'))
 	
@@ -113,6 +152,22 @@ router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,ne
 // DESTROY
 // DELETE /items/5a7db6c74d55bc51bdf39793
 router.delete('/items/:id', requireToken, (req, res, next) => {
+=======
+router.delete('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next) => {
+	User.findById(req.user.id)
+	.then(handle404)
+	.then(foundUser =>{
+		foundUser.favorites.pull(req.params.itemId)
+		return foundUser.save()
+	})
+	.then(() =>res.sendStatus(204))
+	.catch(next)
+})
+
+// DESTROY
+// DELETE /items/5a7db6c74d55bc51bdf39793
+router.delete('/items/:id', requireToken,  (req, res, next) => {
+>>>>>>> cb97a0934d2aeba672443766e891f21b87c9d81b
 	Item.findById(req.params.id)
 		.then(handle404)
 		.then((item) => {

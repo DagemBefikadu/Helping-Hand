@@ -24,12 +24,20 @@ const itemsSchema = new mongoose.Schema(
         category: {
             type: String,
             required: true
+<<<<<<< HEAD
         }, owner: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
 			required: true,
 		},
         
+=======
+        },
+        owner: [{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User'
+		}],
+>>>>>>> cb97a0934d2aeba672443766e891f21b87c9d81b
     },
     
     {
