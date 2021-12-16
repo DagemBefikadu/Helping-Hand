@@ -66,6 +66,7 @@ router.get('/items/:id',(req, res, next) => {
 
 // CREATE
 // POST /items
+
 router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) => {
 	cloudinary.uploader.upload(req.body.item.image, function(result) {
 		console.log(result)
@@ -83,6 +84,22 @@ router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) =
 			// can send an error message back to the client
 			.catch(next)
 	})
+
+router.post('/items',requireToken, (req, res, next) => {
+	// set owner of new item to be current user
+	
+	
+	Item.create(req.body.items)
+	
+		// respond to succesful `create` with status 201 and JSON of new "item"
+		.then((item) => {
+			
+			res.status(201).json({ item: item.toObject() })
+		})
+		// if an error occurs, pass it off to our error handler
+		// the error handler needs the error message and the `res` object so that it
+		// can send an error message back to the client
+		.catch(next)
 })
 
 // UPDATE
@@ -120,9 +137,20 @@ router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,ne
     .catch(next)
 })
 
+router.delete('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next) => {
+	User.findById(req.user.id)
+	.then(handle404)
+	.then(foundUser =>{
+		foundUser.favorites.pull(req.params.itemId)
+		return foundUser.save()
+	})
+	.then(() =>res.sendStatus(204))
+	.catch(next)
+})
+
 // DESTROY
 // DELETE /items/5a7db6c74d55bc51bdf39793
-router.delete('/items/:id',  (req, res, next) => {
+router.delete('/items/:id', requireToken,  (req, res, next) => {
 	Item.findById(req.params.id)
 		.then(handle404)
 		.then((item) => {
