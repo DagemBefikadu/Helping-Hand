@@ -51,6 +51,16 @@ router.get('/users/favorites',requireToken, (req, res, next) =>{
 		.catch(next)
 })
 
+router.get('/users/createItem',requireToken, (req, res, next) =>{
+	User.findById(req.user.id)
+	.populate('createdItems')
+		.then(users => {
+			console.log(users)
+			res.status(200).json({ users })
+		})
+		.catch(next)
+})
+
 
 // SIGN UP
 // POST /sign-up

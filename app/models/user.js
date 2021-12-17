@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Item'
 		}],
+		createdItems: [{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Item'
+		}],
 		token: String,
 	},
 	{
