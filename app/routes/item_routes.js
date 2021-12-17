@@ -68,9 +68,10 @@ router.get('/items/:id',(req, res, next) => {
 // CREATE
 // POST /items
 
-router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) => {
+router.post('/items', requireToken, upload.single('image'),  (req, res, next) => {
 	console.log('req.body : ', req.body)
 	console.log('req.body.items.image: ', req.body.items.image)
+	console.log('req.file.path', req.file)
 	cloudinary.uploader.upload(req.body.items.image, function(result) {
 		console.log(result)
 		console.log(result.url)
