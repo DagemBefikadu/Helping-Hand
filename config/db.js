@@ -1,5 +1,9 @@
 'use strict'
 
+const { request } = require("../server")
+
+require('dotenv').config()
+
 // creating a base name for the mongodb
 // REPLACE THE STRING WITH YOUR OWN DATABASE NAME
 const mongooseBaseName = 'Helping-Hand-Express'
