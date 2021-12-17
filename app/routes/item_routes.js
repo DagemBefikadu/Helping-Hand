@@ -56,6 +56,7 @@ router.get('/items', (req, res, next) => {
 // GET /items/5a7db6c74d55bc51bdf39793
 router.get('/items/:id',(req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
+	console.log('req.params.id', req.params.id)
 	Item.findById(req.params.id)
 		.then(handle404)
 		// if `findById` is succesful, respond with 200 and "item" JSON
@@ -70,7 +71,6 @@ router.get('/items/:id',(req, res, next) => {
 router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) => {
 	console.log('req.body : ', req.body)
 	console.log('req.body.items.image: ', req.body.items.image)
-
 	cloudinary.uploader.upload(req.body.items.image, function(result) {
 		console.log(result)
 		console.log(result.url)
@@ -92,20 +92,24 @@ router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) =
 
 // UPDATE
 // PATCH /items/5a7db6c74d55bc51bdf39793
+	//require token once edit view is nav-able
 router.patch('/items/:id',  removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
-	
+	console.log('req.params: ', req.params)
+	console.log('req.body.items: ', req.body.items)
 
 	Item.findById(req.params.id)
 		.then(handle404)
 		.then((item) => {
+			console.log('found item: ', item)
 			// pass the `req` object and the Mongoose record to `requireOwnership`
 			// it will throw an error if the current user isn't the owner
 			
 
 			// pass the result of Mongoose's `.update` to the next `.then`
-			return Item.updateOne(req.body.item)
+			
+			return item.updateOne(req.body.items)
 		})
 		// if that succeeded, return 204 and no JSON
 		.then(() => res.sendStatus(204))
