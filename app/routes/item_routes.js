@@ -1,4 +1,4 @@
-// Express docs: http://expressjs.com/en/api.html
+/// Express docs: http://expressjs.com/en/api.html
 const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
@@ -6,7 +6,6 @@ const passport = require('passport')
 // pull in Mongoose model for items
 const Item = require('../models/item')
 const User = require('../models/user')
-
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
 const customErrors = require('../../lib/custom_errors')
@@ -93,7 +92,7 @@ router.post('/items', requireToken, upload.single('myFile'),  (req, res, next) =
 
 // UPDATE
 // PATCH /items/5a7db6c74d55bc51bdf39793
-router.patch('/items/:id', requireToken, removeBlanks, (req, res, next) => {
+router.patch('/items/:id',  removeBlanks, (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
 	
@@ -115,11 +114,7 @@ router.patch('/items/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 router.patch('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,next)=>{
-<<<<<<< HEAD
-    User.findById(req.user.id)
-=======
   User.findById(req.user.id)
->>>>>>> 28bb5cb0dc5e2fed86d1f6fd318e4a0ed147ef6f
     .then(handle404)
     .then(foundUser =>{
         foundUser.favorites.push(req.params.itemId)
@@ -134,6 +129,17 @@ router.delete('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,n
 	.then(handle404)
 	.then(foundUser =>{
 		foundUser.favorites.pull(req.params.itemId)
+		return foundUser.save()
+	})
+	.then(() =>res.sendStatus(204))
+	.catch(next)
+})
+
+router.delete('/items/createdItems/:itemId', removeBlanks, requireToken, (req,res,next) => {
+	User.findById(req.user.id)
+	.then(handle404)
+	.then(foundUser =>{
+		foundUser.createdItems.pull(req.params.itemId)
 		return foundUser.save()
 	})
 	.then(() =>res.sendStatus(204))
