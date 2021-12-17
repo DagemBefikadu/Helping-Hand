@@ -30,6 +30,7 @@ const itemsSchema = new mongoose.Schema(
 			ref: 'User'
 		}],
     },
+    
     {
         timestamps: true
     }
