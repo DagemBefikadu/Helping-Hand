@@ -11,6 +11,9 @@ const bcryptSaltRounds = 10
 
 // pull in error types and the logic to handle them and set status codes
 const errors = require('../../lib/custom_errors')
+const customErrors = require('../../lib/custom_errors')
+const handle404 = customErrors.handle404
+
 
 const BadParamsError = errors.BadParamsError
 const BadCredentialsError = errors.BadCredentialsError
@@ -38,6 +41,16 @@ router.get('/users', (req, res, next) => {
 		// respond with status 200 and JSON of the items
 		.then((users) => res.status(200).json({ users: users }))
 		// if an error occurs, pass it to the handler
+		.catch(next)
+})
+
+router.get('/users/createdItems',requireToken, (req, res, next) =>{
+	User.findById(req.user.id)
+	.populate('createdItems')
+		.then(users => {
+			console.log(users)
+			res.status(200).json({ users })
+		})
 		.catch(next)
 })
 
@@ -163,6 +176,17 @@ router.patch('/change-password', requireToken, (req, res, next) => {
 		.then(() => res.sendStatus(204))
 		// pass any errors along to the error handler
 		.catch(next)
+})
+
+router.delete('/users/createdItems/:itemId', requireToken, (req,res,next) => {
+	User.findById(req.user.id)
+	.then(handle404)
+	.then(foundUser =>{
+		foundUser.createdItems.pull(req.params.itemId)
+		return foundUser.save()
+	})
+	.then(() =>res.sendStatus(204))
+	.catch(next)
 })
 
 router.delete('/sign-out', requireToken, (req, res, next) => {

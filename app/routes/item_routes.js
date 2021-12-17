@@ -1,4 +1,4 @@
-// Express docs: http://expressjs.com/en/api.html
+/// Express docs: http://expressjs.com/en/api.html
 const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
@@ -134,6 +134,17 @@ router.delete('/items/favorites/:itemId', removeBlanks, requireToken, (req,res,n
 	.then(handle404)
 	.then(foundUser =>{
 		foundUser.favorites.pull(req.params.itemId)
+		return foundUser.save()
+	})
+	.then(() =>res.sendStatus(204))
+	.catch(next)
+})
+
+router.delete('/items/createdItems/:itemId', removeBlanks, requireToken, (req,res,next) => {
+	User.findById(req.user.id)
+	.then(handle404)
+	.then(foundUser =>{
+		foundUser.createdItems.pull(req.params.itemId)
 		return foundUser.save()
 	})
 	.then(() =>res.sendStatus(204))
