@@ -1,181 +1,46 @@
-# express-auth-template
+# Helping Hand - MERN Application
 
-A template for starting projects with `express` as an API. Includes
-authentication and common middlewares.
+![mobile homepage](./readme_images/search.png)
+![mobile profile](./readme_images/profile.png)
 
-## Installation
+## Tech Stack
+The Helping Hand application usese MongoDB to store a document based NoSQL database. Our server built with Express.js and Node.js connects our database to a React application that renders all of our views and forms for our users. We styled our application with components from React Bootstrap, and set our font Josefin Sans by Santiago Orozco, hosted on Google Fonts. We added font   Helping Hand's digital resources are stored on unique url's generatd by Cloudinary's upload API.
 
-1. [Download](../../archive/master.zip) this template.
-1. Move the .zip file to your `sei/projects/` directory and Unzip it (creating a
-   folder) -- **NOTE:** if the folder was already unzipped, use the `mv` command
-   line to move it to the `sei/projects/` directory.
-1. Rename the directory from express-auth-template -> your-app-name.
-1. Empty [`README.md`](README.md) and fill with your own content.
-1. Move into the new project and `git init`.
-1. Replace all instances of `'express-auth-template'` with your app name.
-1. Install dependencies with `npm install`.
-1. Ensure that you have `nodemon` installed by running `npm install -g nodemon`.
-2. Once everything is working, make an initial commit.
+## Approach
+Before writing our first line of code, our team spent about half of a day brainstorming, planning, and strategizing. We used Lucid Charts to brainstorm the views and components we would need, and then used it to record our desired user journey through the application.
+We then moved to planning what React Componenets and Page Layouts we would need to bring our vision to life, mapping these out in Google Slides and Lucid Chart. We then created a To Do list and tracked task assignments in Trello, which we continued to use throughout our development process together.
 
-## Structure
+We began every day by group debebugging and then working together to merge our code into our git manager's main repository. We would then move into peer programming for the rest of the morning, and break of into group programming after lunch. We would then end the day by merging our code again, and assigning tasks for the evening. We prioritized our team's well being by taking breaks at regular intervals.
 
-Dependencies are stored in [`package.json`](package.json).
+## Installation instructions.
 
-The most important file for understanding the structure of the template is
-`server.js`. This is where the actual Express `app` object is created, where
-the middlewares and routes are registered, and more. To register a routefile,
-follow the pattern established here with `exampleRoutes` and `userRoutes`. If
-you want to add any middlewares to your app, do that here.
+Install node packages for the helpingHand React app: ```npm i axios boostrap react-bootstrap react-router-dom  sass uuid web-vitals --save @fortawesome/fontawesome-svg-core --save @fortawesome/free-solid-svg-icons --save @fortawesome/react-fontawesome```
 
-The `app` directory contains models and route files. Models are simply Mongoose
-models. To create your own, follow the patterns established in
-`app/models/example.js`. Route files are somewhat similar to controllers in
-Rails, but they cover more functionality, including serialization and deciding
-which HTTP verbs to accept and what to do with them.
 
-The `config` directory holds just `db.js`, which is where you specify the name
-and URL of your database.
 
-The `lib` directory is for code that will be used in other places in the
-application. The token authentication code is stored in `lib/auth.js`. The
-other files in `lib` deal with error handling. `custom_errors.js` is where all
-the different custom classes of errors are created. If you need some other kind
-of error message, you can add it here. There are also some functions defined
-here that are used elsewhere to check for errors. `lib/error_handler.js` is a
-function that will be used in all your `.catch`es. It catches errors, and sets
-the response status code based on what type of error got thrown.
+## User Stories
 
-You probably will only need to interact with files in `app/models`,
-`app/routes`, and `server.js`. You'll need to edit `db/config.js` just once,
-to change the name of your app.
+Our users are community members who want to use their surplus goods to meet the needs of their community members. Helping hand gives these users the tools to find the right information for meeting one another's needs wihtout having to look outside their own community. That's why we created our app with two primary user experiences in mind: 
 
-## API
+Posting a Listing: As a user, I want to sign up using my email address so I can create an account on the platform to create a listing to give away my resources for people in need.
 
-Use this as the basis for your own API documentation. Add a new third-level
-heading for your custom entities, and follow the pattern provided for the
-built-in user authentication documentation.
+Finding an Item: As a user, I want to be able to find items I need in my community, and refine my search by category and zipcode.
 
-Scripts are included in [`curl-scripts`](curl-scripts) to test built-in actions. Feel free to use Postman for testing, using the curl scripts listed below and in the folder for setting up headers and request bodies.
-Add your own scripts to test your custom API.
+## Wire Frames
 
-### Authentication
+### User Journey
+![user journey](./readme_images/userJourney.png)
 
-| Verb   | URI Pattern            | Controller#Action |
-|--------|------------------------|-------------------|
-| POST   | `/sign-up`             | `users#signup`    |
-| POST   | `/sign-in`             | `users#signin`    |
-| PATCH  | `/change-password/` | `users#changepw`  |
-| DELETE | `/sign-out/`        | `users#signout`   |
+### Application Views
+![views](./readme_images/views.png)
 
-#### POST /sign-up
+### React Components
+![components](./readme_images/components.png)
 
-Request:
 
-```sh
-curl --include --request POST http://localhost:8000/sign-up \
-  --header "Content-Type: application/json" \
-  --data '{
-    "credentials": {
-      "email": "an@example.email",
-      "password": "an example password",
-      "password_confirmation": "an example password"
-    }
-  }'
-```
+## Overcoming Roadblocks
 
-```sh
-curl-scripts/sign-up.sh
-```
+Our team encountered a few roadblocks when developing Helping Hand. One of most time consuming was getting our .map() array method to stop throwing an error when passing our data into components. We solved the issue by pivoting away from passing all of our data down from props to doing more API calls to our database inside of the components which needed the data.
 
-Response:
+Another roadblock we encountered was finding the most efficient way to store and reneder information about user's lists of favorite items. We decided to nest the favorites doucments inside of their respective user documents. We discovered that we could use .populate in our server to render the entirity of the item objects based off of the id's in the user's favorites array.
 
-```md
-HTTP/1.1 201 Created
-Content-Type: application/json; charset=utf-8
-
-{
-  "user": {
-    "id": 1,
-    "email": "an@example.email"
-  }
-}
-```
-
-#### POST /sign-in
-
-Request:
-
-```sh
-curl --include --request POST http://localhost:8000/sign-in \
-  --header "Content-Type: application/json" \
-  --data '{
-    "credentials": {
-      "email": "an@example.email",
-      "password": "an example password"
-    }
-  }'
-```
-
-```sh
-curl-scripts/sign-in.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-
-{
-  "user": {
-    "id": 1,
-    "email": "an@example.email",
-    "token": "33ad6372f795694b333ec5f329ebeaaa"
-  }
-}
-```
-
-#### PATCH /change-password/
-
-Request:
-
-```sh
-curl --include --request PATCH http://localhost:8000/change-password/ \
-  --header "Authorization: Bearer $TOKEN" \
-  --header "Content-Type: application/json" \
-  --data '{
-    "passwords": {
-      "old": "an example password",
-      "new": "super sekrit"
-    }
-  }'
-```
-
-```sh
-TOKEN=33ad6372f795694b333ec5f329ebeaaa curl-scripts/change-password.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 204 No Content
-```
-
-#### DELETE /sign-out/
-
-Request:
-
-```sh
-curl --include --request DELETE http://localhost:8000/sign-out/ \
-  --header "Authorization: Bearer $TOKEN"
-```
-
-```sh
-TOKEN=33ad6372f795694b333ec5f329ebeaaa curl-scripts/sign-out.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 204 No Content
-```
