@@ -14,7 +14,8 @@ We began every day by group debebugging and then working together to merge our c
 
 ## Installation instructions.
 
-Install node packages for the helpingHand React app: ```npm i bcrypt cloudinary cors dotenv express jsonwebtoken mongodb mongoose multer passport passport-http-bearer```
+Install node packages for the helpingHand React app: ```npm i bcrypt cloudinary cors dotenv express jsonwebtoken mongodb mongoose multer passport passport-http-bearer
+npm i axios boostrap react-bootstrap react-router-dom  sass uuid web-vitals --save @fortawesome/fontawesome-svg-core --save @fortawesome/free-solid-svg-icons --save @fortawesome/react-fontawesome```
 
 
 
@@ -43,5 +44,4 @@ Finding an Item: As a user, I want to be able to find items I need in my communi
 Our team encountered a few roadblocks when developing Helping Hand. One of most time consuming was getting our .map() array method to stop throwing an error when passing our data into components. We solved the issue by pivoting away from passing all of our data down from props to doing more API calls to our database inside of the components which needed the data.
 
 Another roadblock we encountered was finding the most efficient way to store and reneder information about user's lists of favorite items. We decided to nest the favorites doucments inside of their respective user documents. We discovered that we could use .populate in our server to render the entirity of the item objects based off of the id's in the user's favorites array.
-
 

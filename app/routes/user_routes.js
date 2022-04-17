@@ -65,6 +65,8 @@ router.get('/users/favorites',requireToken, (req, res, next) =>{
 })
 
 
+
+
 // SIGN UP
 // POST /sign-up
 router.post('/sign-up', (req, res, next) => {
